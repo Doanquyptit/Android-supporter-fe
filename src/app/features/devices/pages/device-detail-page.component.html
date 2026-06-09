@@ -1,0 +1,149 @@
+@if (data$ | async; as data) {
+  <section class="detail-shell">
+    <div class="detail-header">
+      <div>
+        <a class="back-link" routerLink="/devices">Danh sách thiết bị</a>
+        <p class="eyebrow">Chi tiết thiết bị</p>
+        <h1>{{ data.device.name }}</h1>
+        <p class="subhead">{{ data.device.code }} · {{ data.device.location }}</p>
+      </div>
+      <app-device-status-badge [status]="data.device.status" />
+    </div>
+
+    <div class="summary-grid">
+      <article class="summary-card">
+        <p class="card-label">Trạng thái kết nối</p>
+        <h2>{{ data.device.status === 'ONLINE' ? 'Trực tuyến' : 'Mất kết nối' }}</h2>
+        <p class="card-copy">Backend xác định dựa trên heartbeat gần nhất của thiết bị.</p>
+      </article>
+
+      <article class="summary-card">
+        <p class="card-label">Lần cuối heartbeat</p>
+        <h2>{{ data.device.lastSeenAt | date: 'dd/MM/yyyy HH:mm:ss' }}</h2>
+        <p class="card-copy">Mốc backend nhận được cập nhật mới nhất từ thiết bị.</p>
+      </article>
+
+      <article class="summary-card">
+        <p class="card-label">Uptime</p>
+        <h2>{{ formatUptime(data.device.uptimeSeconds) }}</h2>
+        <p class="card-copy">Thời gian online liên tục của phiên hiện tại tính từ lần ON gần nhất.</p>
+      </article>
+
+      <article class="summary-card">
+        <p class="card-label">Lần ghi nhận ON</p>
+        <h2>
+          @if (getLatestOnAt(data.history); as latestOnAt) {
+            {{ latestOnAt | date: 'dd/MM/yyyy HH:mm:ss' }}
+          } @else {
+            Chưa có
+          }
+        </h2>
+        <p class="card-copy">Mốc backend ghi nhận thiết bị online trở lại gần nhất.</p>
+      </article>
+
+      <article class="summary-card">
+        <p class="card-label">Lần ghi nhận OFF</p>
+        <h2>
+          @if (getLatestOffAt(data.history); as latestOffAt) {
+            {{ latestOffAt | date: 'dd/MM/yyyy HH:mm:ss' }}
+          } @else {
+            Chưa có
+          }
+        </h2>
+        <p class="card-copy">Mốc backend đánh dấu mất heartbeat quá ngưỡng timeout.</p>
+      </article>
+    </div>
+
+    <section class="info-card">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Overview</p>
+          <h2>Thông tin thiết bị</h2>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div>
+          <span class="info-label">Model</span>
+          <strong>{{ data.device.model }}</strong>
+        </div>
+        <div>
+          <span class="info-label">Phiên bản OS</span>
+          <strong>{{ data.device.osVersion }}</strong>
+        </div>
+        <div>
+          <span class="info-label">Phiên bản app</span>
+          <strong>{{ data.device.appVersion }}</strong>
+        </div>
+        <div>
+          <span class="info-label">Vị trí</span>
+          <strong>{{ data.device.location }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-card">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow section-eyebrow">Bộ lọc lịch sử</p>
+          <h2>Lọc lịch sử ON/OFF</h2>
+        </div>
+      </div>
+
+      <form class="filters" (ngSubmit)="applyFilters()">
+        <label class="field">
+          <span>Thời gian bắt đầu</span>
+          <input type="datetime-local" name="startAt" [(ngModel)]="startAt" />
+        </label>
+
+        <label class="field">
+          <span>Thời gian kết thúc</span>
+          <input type="datetime-local" name="endAt" [(ngModel)]="endAt" />
+        </label>
+
+        <div class="filter-actions">
+          <button class="filter-button primary" type="submit">Áp dụng</button>
+          <button class="filter-button secondary" type="button" (click)="resetFilters()">Bỏ lọc</button>
+          <button class="filter-button export" type="button" (click)="exportHistory(data.device.id)">Xuất Excel</button>
+        </div>
+      </form>
+    </section>
+
+    <app-device-history-table [history]="data.history" />
+
+    <section class="info-card pagination-card">
+      <div class="pagination">
+        <label class="page-size-field">
+          <span>Số dòng/trang</span>
+          <select [ngModel]="pageSize" (ngModelChange)="changePageSize($event)" name="pageSize">
+            @for (option of pageSizeOptions; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </label>
+
+        <button
+          class="filter-button secondary"
+          type="button"
+          [disabled]="data.history.page === 0"
+          (click)="changePage(data.history.page - 1)"
+        >
+          Trang trước
+        </button>
+
+        <p class="pagination-label">
+          Trang {{ data.history.totalPages === 0 ? 0 : data.history.page + 1 }} / {{ data.history.totalPages }}
+        </p>
+
+        <button
+          class="filter-button secondary"
+          type="button"
+          [disabled]="data.history.page + 1 >= data.history.totalPages"
+          (click)="changePage(data.history.page + 1)"
+        >
+          Trang sau
+        </button>
+      </div>
+    </section>
+  </section>
+}

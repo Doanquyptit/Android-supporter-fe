@@ -1,0 +1,21 @@
+<div class="app-shell">
+  <header class="topbar">
+    <div>
+      <p class="brand-kicker">iHub Operations</p>
+      <h1>Device Monitor</h1>
+    </div>
+    <div class="topbar-side">
+      <nav class="topbar-nav">
+        <a routerLink="/devices" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          Thiết bị
+        </a>
+        <a routerLink="/support" routerLinkActive="active">Support</a>
+      </nav>
+      <p class="topbar-copy">Theo dõi trạng thái kiosk Android và điều khiển từ xa trên giao diện web.</p>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <router-outlet />
+  </main>
+</div>

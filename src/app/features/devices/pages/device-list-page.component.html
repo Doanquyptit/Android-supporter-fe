@@ -1,0 +1,82 @@
+<section class="hero">
+  <div>
+    <p class="eyebrow">IHUB Monitor</p>
+    <h1>Danh sách thiết bị</h1>
+    <p class="hero-copy">
+      Theo dõi tình trạng hiện tại của tất cả kiosk IHUB, từ truy cập nhanh vào chi tiết và lịch sử
+      vận hành.
+    </p>
+  </div>
+</section>
+
+<section class="device-panel">
+  <div class="panel-heading">
+    <div>
+      <p class="eyebrow">Overview</p>
+      <h2>Trạng thái hiện tại</h2>
+    </div>
+    <a class="refresh-link" routerLink="/devices">Làm mới danh sách</a>
+  </div>
+
+  <form class="filters" (ngSubmit)="applyFilters()">
+    <label class="field">
+      <span>Tìm kiếm</span>
+      <input
+        type="text"
+        name="keyword"
+        [(ngModel)]="keyword"
+        placeholder="Nhập mã hoặc tên thiết bị"
+      />
+    </label>
+
+    <label class="field">
+      <span>Trạng thái</span>
+      <select name="status" [(ngModel)]="status">
+        <option value="">Tất cả</option>
+        <option value="ONLINE">Trực tuyến</option>
+        <option value="OFFLINE">Mất kết nối</option>
+      </select>
+    </label>
+
+    <div class="filter-actions">
+      <button class="filter-button primary" type="submit">Áp dụng</button>
+      <button class="filter-button secondary" type="button" (click)="resetFilters()">Bỏ lọc</button>
+    </div>
+  </form>
+
+  <div class="table-wrapper">
+    <table class="device-table">
+      <thead>
+        <tr>
+          <th>Mã thiết bị</th>
+          <th>Tên thiết bị</th>
+          <th>Trạng thái</th>
+          <th>Lần cuối cập nhật</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (device of devices$ | async; track device.id) {
+          <tr>
+            <td>{{ device.code }}</td>
+            <td>
+              <div class="device-name">{{ device.name }}</div>
+            </td>
+            <td>
+              <app-device-status-badge [status]="device.status" />
+            </td>
+            <td>{{ device.lastSeenAt | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+            <td class="actions">
+              <a class="detail-button" [routerLink]="['/devices', device.id]">Chi tiết</a>
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr>
+            <td class="empty-state" colspan="5">Không tìm thấy thiết bị phù hợp.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

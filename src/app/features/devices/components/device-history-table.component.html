@@ -1,0 +1,35 @@
+<section class="history-card">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Timeline</p>
+      <h2>Lịch sử ON/OFF</h2>
+    </div>
+    <p class="meta">{{ history().totalItems }} sự kiện</p>
+  </div>
+
+  <div class="history-table-wrapper">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Thời gian</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of history().items; track item.id) {
+          <tr>
+            <td>{{ item.createdAt | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+            <td>
+              <app-device-status-badge [status]="item.toStatus" />
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr>
+            <td colspan="2">Không có dữ liệu lịch sử.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

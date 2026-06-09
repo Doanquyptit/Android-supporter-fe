@@ -1,0 +1,196 @@
+<section class="hero">
+  <div>
+    <p class="eyebrow">Chi tiết hỗ trợ</p>
+    <h1>Hỗ trợ thiết bị {{ deviceId }}</h1>
+    <p class="hero-copy">
+      Theo dõi trạng thái kết nối, thực hiện thoại 2 chiều và gửi thao tác từ xa cho thiết bị đang
+      được hỗ trợ.
+    </p>
+  </div>
+  <a class="back-link" routerLink="/support">Quay lại danh sách</a>
+</section>
+
+<section class="control-grid">
+  <aside class="control-panel">
+    <div class="panel-header">
+      <p class="eyebrow">Phiên hỗ trợ</p>
+      <h2>Thông tin kết nối</h2>
+    </div>
+
+    <div class="detail-grid">
+      <div class="status-card">
+        <span class="status-label">Device ID</span>
+        <strong>{{ deviceId }}</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Kết nối</span>
+        <strong>{{ connectionState }}</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Điều khiển</span>
+        <strong>{{ canControl ? 'Có quyền điều khiển' : 'Chỉ xem' }}</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Trạng thái hỗ trợ</span>
+        <strong>
+          @switch (supportState) {
+            @case ('REQUESTED') {
+              Đang hỗ trợ
+            }
+            @case ('CONTROL_PENDING') {
+              Đang chờ khách hàng đồng ý điều khiển
+            }
+            @case ('CONTROL_GRANTED') {
+              Đã được cấp quyền điều khiển
+            }
+            @default {
+              Chưa nhận hỗ trợ
+            }
+          }
+        </strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Frame gần nhất</span>
+        <strong>
+          @if (lastFrameAt) {
+            {{ lastFrameAt | date: 'dd/MM/yyyy HH:mm:ss' }}
+          } @else {
+            Chưa có dữ liệu
+          }
+        </strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Trạng thái phiên</span>
+        <strong>{{ status }}</strong>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button
+        class="button primary"
+        type="button"
+        (click)="requestControl()"
+        [disabled]="connectionState !== 'CONNECTED' || !deviceId || canControl || supportState === 'CONTROL_PENDING'"
+      >
+        Yêu cầu điều khiển
+      </button>
+      <button class="button secondary" type="button" (click)="disconnect()">Ngắt kết nối</button>
+    </div>
+
+    <div class="panel-header compact">
+      <p class="eyebrow">Audio call</p>
+      <h2>Thoại 2 chiều</h2>
+    </div>
+
+    <div class="action-row">
+      <button
+        class="button primary"
+        type="button"
+        (click)="startAudioCall()"
+        [disabled]="audioSignalingState !== 'CONNECTED' || audioCallState === 'WAITING_ACCEPT' || audioCallState === 'CALLING' || audioCallState === 'IN_CALL'"
+      >
+        Bắt đầu cuộc gọi
+      </button>
+      <button class="button secondary" type="button" (click)="endAudioCall()">Kết thúc cuộc gọi</button>
+    </div>
+
+    <audio #remoteAudio autoplay playsinline></audio>
+
+    <div class="detail-grid">
+      <div class="status-card">
+        <span class="status-label">Signaling audio</span>
+        <strong>{{ audioSignalingState }}</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Cuộc gọi audio</span>
+        <strong>{{ audioCallState }}</strong>
+        <p>{{ audioCallStatus }}</p>
+      </div>
+    </div>
+
+    <div class="panel-header compact">
+      <p class="eyebrow">Lệnh</p>
+      <h2>Tương tác</h2>
+    </div>
+
+    <label class="field">
+      <span>Chế độ thao tác</span>
+      <select name="interactionMode" [(ngModel)]="interactionMode">
+        <option value="TAP">Tap</option>
+        <option value="SWIPE">Swipe</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Thời lượng swipe (ms)</span>
+      <input
+        type="number"
+        name="swipeDurationMs"
+        [(ngModel)]="swipeDurationMs"
+        min="50"
+        max="5000"
+        step="50"
+      />
+    </label>
+
+    <div class="panel-header compact">
+      <p class="eyebrow">Bàn phím từ xa</p>
+      <h2>Nhập văn bản</h2>
+    </div>
+
+    <label class="field">
+      <span>Văn bản gửi tới ô đang focus</span>
+      <textarea
+        name="remoteText"
+        [(ngModel)]="remoteText"
+        rows="4"
+        placeholder="Gõ nội dung ở đây, sau đó gửi xuống thiết bị."
+      ></textarea>
+    </label>
+
+    <div class="action-row">
+      <button class="button primary" type="button" (click)="sendText()">Gửi văn bản</button>
+    </div>
+
+    @if (lastResult) {
+      <div class="result-card">
+        <span class="status-label">Phản hồi gần nhất</span>
+        <strong>{{ lastResult.type }}</strong>
+        <p>
+          {{
+            lastResult.errorMessage
+              ?? lastResult.status
+              ?? 'Thiết bị đã nhận lệnh nhưng chưa có mô tả bổ sung.'
+          }}
+        </p>
+      </div>
+    }
+  </aside>
+
+  <section class="viewer-panel">
+    <div class="panel-header">
+      <div>
+        <b class="eyebrow">Màn hình thiết bị</b>
+      </div>
+      <p class="viewer-help">
+        
+      </p>
+    </div>
+
+    <div
+      class="viewer-surface"
+      (click)="handleCanvasClick($event, canControl)"
+      (pointerdown)="handlePointerDown($event, canControl)"
+      (pointerup)="handlePointerUp($event, canControl)"
+    >
+      <canvas #screenCanvas class="screen-canvas"></canvas>
+
+      @if (!hasFrame) {
+        <div class="canvas-placeholder">
+          <h3>Chưa có frame màn hình</h3>
+          <p>Thiết bị sẽ hiển thị tại đây sau khi admin nhận hỗ trợ và IHUB bắt đầu stream.</p>
+        </div>
+      }
+    </div>
+  </section>
+</section>

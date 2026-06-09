@@ -1,0 +1,56 @@
+<section class="hero">
+  <div>
+    <p class="eyebrow">Hỗ trợ từ xa</p>
+    <h1>Danh sách yêu cầu hỗ trợ</h1>
+    <p class="hero-copy">
+      Theo dõi các thiết bị IHUB đang yêu cầu hỗ trợ, sau đó mở chi tiết để nhận hỗ trợ và điều
+      khiển từ xa.
+    </p>
+  </div>
+</section>
+
+<section class="list-shell">
+  <div class="summary-card">
+    <span class="status-label">Kết nối websocket</span>
+    <strong>{{ connectionState }}</strong>
+    <p>{{ status }}</p>
+  </div>
+
+  <div class="empty-card">
+    <span class="status-label">Danh sách yêu cầu hỗ trợ</span>
+
+
+    @if (supportRequests.length > 0) {
+    <div class="request-list">
+      @for (request of supportRequests; track request.deviceId) {
+      <article class="request-card">
+        <div class="request-main">
+          <div>
+            <span class="status-label">Device ID</span>
+            <strong>{{ request.deviceId }}</strong>
+          </div>
+          <div>
+            <span class="status-label">Thời điểm yêu cầu</span>
+            <strong>{{ request.requestedAt | date: 'dd/MM/yyyy HH:mm:ss' }}</strong>
+          </div>
+          <div>
+            <span class="status-label">Kết nối</span>
+            <strong>{{ getRequestConnectionLabel(request) }}</strong>
+          </div>
+          <div>
+            <span class="status-label">Trạng thái</span>
+            <strong>{{ getRequestStatusLabel(request) }}</strong>
+          </div>
+        </div>
+
+        <a class="button primary detail-link" [routerLink]="['/support', request.deviceId]">
+          Chi tiết
+        </a>
+      </article>
+      }
+    </div>
+    } @else {
+    <strong>Chưa có yêu cầu mới</strong>
+    }
+  </div>
+</section>

@@ -1,0 +1,117 @@
+:host {
+  display: block;
+}
+
+.hero {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at top right, rgba(191, 90, 42, 0.18), transparent 38%),
+    linear-gradient(135deg, #f5f7fb 0%, #ffffff 100%);
+  border: 1px solid #d9e0ea;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: #bf5a2a;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  color: #132038;
+}
+
+.hero-copy,
+.summary-card p,
+.empty-card p {
+  margin: 0.5rem 0 0;
+  color: #53657e;
+}
+
+.list-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.summary-card,
+.request-card,
+.empty-card {
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  border: 1px solid #d9e0ea;
+  box-shadow: 0 20px 45px rgba(19, 32, 56, 0.08);
+}
+
+.summary-card strong,
+.empty-card strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: #132038;
+}
+
+.request-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.request-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.request-main {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  flex: 1;
+}
+
+.request-main strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: #132038;
+}
+
+.status-label {
+  color: #5f6d82;
+  font-size: 0.88rem;
+}
+
+.button {
+  padding: 0.82rem 1rem;
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.button.primary {
+  background: #132038;
+  color: #ffffff;
+}
+
+.detail-link {
+  min-width: 8rem;
+}
+
+@media (max-width: 960px) {
+  .request-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .request-main {
+    grid-template-columns: 1fr;
+  }
+}

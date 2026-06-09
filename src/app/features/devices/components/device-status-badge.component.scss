@@ -1,0 +1,42 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 7.5rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.status-online {
+  background: #d7f7e3;
+  color: #0f7b42;
+}
+
+.status-offline {
+  background: #e8edf2;
+  color: #425466;
+}
+
+.status-idle {
+  background: #d9ecff;
+  color: #195d9f;
+}
+
+.status-in-use {
+  background: #ffe9c8;
+  color: #9b5b00;
+}
+
+.status-error {
+  background: #ffd8d8;
+  color: #a12626;
+}
+
+.status-maintenance {
+  background: #fff2c7;
+  color: #8b6b00;
+}
